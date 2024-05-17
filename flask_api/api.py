@@ -12,7 +12,7 @@ import logging
 from flask import Flask, request, jsonify
 from algorithms.give_plans import run_algorithm
 
-
+print(1)
 
 app = Flask(__name__)
 
@@ -34,7 +34,7 @@ def receive_data():
 
     # response = {'status': 'success', 'message': 'Data received and stored successfully'}
     response = {'status': 'success', 'message': '成功接收数据'}
-    ## 开始处理数据
+    ## 开始把数据传入算法
     threading.Thread(target = run, args = (received_data, )).start()
     return jsonify(response)
 
@@ -55,9 +55,8 @@ def run(received_data):
 
 
 
-def send_processed_data_to_backend(plans_result):
+def send_processed_data_to_backend(plans_result, backend_api_url = 'http://backend-api-url.com/api'):
     ## 后端接口地址
-    backend_api_url = 'http://backend-api-url.com/api'
     try:
         final_result = json.dumps(plans_result)
         response = requests.post(backend_api_url, json = final_result)
