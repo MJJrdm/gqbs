@@ -1,16 +1,16 @@
 # 当一个母材只被用于一个排刀方案，且计划人员进行对算法输出的排刀方案进行调整时，
 # 需要由算法计算相应的关联数据（母材投入重量、成品产出重量、数量等）变化结果，并进行相应调整；
 # 当一个母材被用于多个排刀方案，且计划人员希望进行变动时，由计划人员自行进行方案的计算与调整。
-# 思考如何实现这个逻辑，目前感觉这部分的计算与调整单独分出来，做一个接口去实现是最简单的，不应该放到排刀算法里面。
 
-import numpy as np
+
 import pandas as pd
 import math
+
 
 def main():
     ##### 读取排刀方案数据，排刀方案算法是从python列表或字典输出排刀方案excel表格，
     ##### 现在尝试从排刀excel表格到python列表或字典，然后调整python列表或字典，再进行输出，更换excel表格
-    file_path = 'E:/富士康/工作/排产项目/广汽宝钢/排刀/Python代码/2024.1.22_v4/v9/输出结果/20240417_2.xlsx'
+    file_path = 'v9/输出结果/20240417_2.xlsx'
     df = pd.read_excel(file_path, header = [0, 1])
     fill_columns(df)
     all_plans = df_plans_to_dict(df)
