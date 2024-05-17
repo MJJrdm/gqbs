@@ -41,7 +41,7 @@ def receive_data():
 
 def run(received_data):
     try:
-        # 貌似不需要json.loads(),json格式的数据进来之后好像会自动转成Python字典
+# 貌似不需要jso                                                                                                                                                                                               n.loads(),json格式的数据进来之后好像会自动转成Python字典
         received_data_dict = json.loads(received_data)
         # 算法运算，返回最终结果
         plans_result = run_algorithm(received_data_dict)
