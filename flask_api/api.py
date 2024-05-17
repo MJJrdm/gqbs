@@ -12,7 +12,6 @@ import logging
 from flask import Flask, request, jsonify
 from algorithms.give_plans import run_algorithm
 
-print(1)
 
 app = Flask(__name__)
 
