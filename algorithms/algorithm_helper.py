@@ -660,6 +660,12 @@ def cut_exact_info(current_index, storage_info_dict, plan_choice,
                         parent_used_weight_in_kg = parent_used_weight_temp
                         reference_index = i
 
+
+
+        ##### 更新母材重量、被裁切的每个零件所需重量、每一个零件号对应零件所需的总剩余需求重量
+        ##### 母件库存重量多减去了15kg，为了避免后续生产人员可能要手动调整订单零件输出重量，这种方法是否可行？
+
+
         # order_info_dict[components_come_first[components_group[0]]]['weight_requirement'] -= weight
         # same_components_required_weight[components_group[0]] -= weight
 
@@ -771,6 +777,7 @@ def max_weight_without_exceeding_outer_radius(max_radius, width, num, inner_radi
 ##### 计算横切的可生产数量
 def num_production(total_weight, length, width, thickness, density = 7.85):
     return 10**6 * total_weight / (length * width * thickness * density)
+
 
 
 
