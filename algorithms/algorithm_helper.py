@@ -226,7 +226,7 @@ def optimization(order_info_dict, storage_info_dict, filter_components_storage_d
                                                                  components = cut_info['cut_components_num'],
                                                                  components_output_weight = [weight] + [i for i in reduced_weights],
                                                                  cut_info = cut_info['plan_string'],
-                                                                 note = '没问题，很好', 
+                                                                 note = '', 
                                                                  num_cut = cut_info['num_cut'],
                                                                  cut_num_for_each_component = cut_info['cut_num']))
                     # output_plans.append({'parent_coil_number': parent_coil_number, 
@@ -660,12 +660,6 @@ def cut_exact_info(current_index, storage_info_dict, plan_choice,
                         parent_used_weight_in_kg = parent_used_weight_temp
                         reference_index = i
 
-
-
-        ##### 更新母材重量、被裁切的每个零件所需重量、每一个零件号对应零件所需的总剩余需求重量
-        ##### 母件库存重量多减去了15kg，为了避免后续生产人员可能要手动调整订单零件输出重量，这种方法是否可行？
-
-
         # order_info_dict[components_come_first[components_group[0]]]['weight_requirement'] -= weight
         # same_components_required_weight[components_group[0]] -= weight
 
@@ -774,10 +768,9 @@ def max_weight_without_exceeding_outer_radius(max_radius, width, num, inner_radi
 
 
 
-######################### 计算横切的可生产数量，还需要确认密度等数值是否是固定的还是可变 #########################
+##### 计算横切的可生产数量
 def num_production(total_weight, length, width, thickness, density = 7.85):
     return 10**6 * total_weight / (length * width * thickness * density)
-######################### 计算横切的可生产数量，还需要确认密度等数值是否是固定的还是可变 #########################
 
 
 
@@ -809,7 +802,7 @@ def return_cut_solution(plan_choice, components_come_first, unique_component_wid
     storage_components = list(range(len(components)))
     # storage_components -> [0, 1, 2, 3, 4]
     storage_components_width = [unique_component_width[i] for i in components]
-    # print(f'使用母材{parent_used_to_cut}裁切零件')
+    
     objective = plan_choice['obj']
     plan_string_list = [f'{cut[i]} * {storage_components_width[i]} + ' for i in storage_components if cut[i] != 0]
     plan_string = ''
@@ -1032,7 +1025,7 @@ def plans_using_components_storage(order_info_dict, filter_components_storage_da
                 
                 else:
                     ##### 单卷成品重量大于x才参与运算
-                    x = 10
+                    x = 50
                     factory_nums = [j['factory_num'] for j in component_storage_info_dict.values() if j['weight'] >= x]
                     indices = {j['factory_num']: i for i, j in component_storage_info_dict.items() if j['factory_num'] in factory_nums}
                     num_components = len(factory_nums)
@@ -1050,9 +1043,8 @@ def plans_using_components_storage(order_info_dict, filter_components_storage_da
                         instance.add_string(f'solve minimize abs(output_weight - weight_requirement);\n')
                         result = instance.solve()
 
-                        ########################### 目前没有使用obj，后续根据具体情况看如何使用 ###########################
-                        obj = result.objective                                               ##########################
-                        ########################### 目前没有使用obj，后续根据具体情况看如何使用 ###########################
+                        ## 目前未使用obj
+                        obj = result.objective         
 
                         ## used_storage_components表示对应库存零件是否被使用
                         used_storage_components = result.solution.used
@@ -1160,16 +1152,10 @@ def add_all_info_to_plans(all_data_for_output, order_data, parents_inventory_dat
                         value = int(value)
                     key = order_keys_mapping[list(order_keys_mapping.keys())[order_column_name_index]]
                     if key in each_plan:
-                        # print(f'key是{key}')
-                        # print(each_plan[key])
                         each_plan[key].append(value)
-                        # print(f'key{key}没问题')
                     else:
-                        # print(f'key是{key}')
                         each_plan[key] = []
-                        # print(each_plan[key])
                         each_plan[key].append(value)
-                        # print(f'key{key}没问题')
                 each_plan['components_output_quantity'] = []
                 try:
                     length = each_plan['components_length'][index]
