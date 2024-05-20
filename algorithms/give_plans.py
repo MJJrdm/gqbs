@@ -3,7 +3,7 @@ import time
 import json
 from .algorithm_helper import *
 from .helper import give_plan_structure_dict
-from loguru import logger
+from .log_config import logger
 
 ## 四个筛选标准，分别为钢厂、材质、厚度、镀层
 filter_columns = ['mill', 'material_type', 'thickness', 'coating']
