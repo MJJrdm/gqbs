@@ -700,7 +700,7 @@ def cut_exact_info(current_index, storage_info_dict, plan_choice,
 
     ##### 母材数量不足，给出提示。后续需要考虑同时给出其他方案。
     else:
-        logger.warning("母材数量不足！！！！")
+        logger.warning(f"对应母材零件号为{current_parent_id}的母材库存不足！！！！")
         return (None, ) * 7
 
 
