@@ -31,6 +31,7 @@ def run_algorithm(received_data_dict):
     
         ##### 过滤条件,四个条件分别为钢厂、材质、厚度、镀层
         combined_order_criteria = order_data[filter_columns].eq(combination).all(axis = 1)
+        
         order_group_data = order_data[combined_order_criteria]
 
         # ##### 在订单内的零件对应订购方案的所有不重复的母材零件号列表
@@ -71,7 +72,7 @@ def run_algorithm(received_data_dict):
             
         ## 库存里不存在对应的可用来裁切母材
         else:
-            # logger.info("不存在可用来裁切的母材")
+            logger.warning(f'母材库里不存在符合{combination}的母材')
             plans = [give_plan_structure_dict(components = [i for i in order_info_dict],
                                              components_output_weight = ['/' for _ in order_info_dict])]
 

@@ -6,9 +6,10 @@ def setup_logger():
     logger = logging.getLogger('my_logger')
     logger.setLevel(logging.DEBUG)
 
+
     if not logger.hasHandlers():
         # 获取当前日期并格式化
-        current_date = datetime.now().strftime('%Y-%m-%d')
+        current_date = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
         log_filename = f'{current_date}.log'
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
