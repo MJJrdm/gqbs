@@ -9,8 +9,8 @@ def setup_logger():
 
     if not logger.hasHandlers():
         # 获取当前日期并格式化
-        current_date = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
-        log_filename = f'{current_date}.log'
+        current_time = datetime.now().strftime('%Y-%m-%d_%H-%M-%S')
+        log_filename = f'{current_time}.log'
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
         # 创建一个文件处理器并设置级别
