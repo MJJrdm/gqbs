@@ -1,3 +1,0 @@
-2024-05-17 09:57:43,147 - my_logger - WARNING - This is a warning message
-2024-05-17 09:57:43,147 - my_logger - ERROR - This is an error message
-2024-05-17 09:57:43,148 - my_logger - CRITICAL - This is a critical message
