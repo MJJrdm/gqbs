@@ -4,6 +4,7 @@ import pandas as pd
 from minizinc import Instance, Solver
 from .minizinc_model import *
 from .helper import give_plan_structure_dict
+from .log_config import logger
 # from openpyxl.styles import Alignment
 
 ##### 预处理订单数据以及母件库存数据，预处理后的数据作为算法输入数据
@@ -181,7 +182,7 @@ def optimization(order_info_dict, storage_info_dict, filter_components_storage_d
                                                                               min_waste, \
                                                                               get_rid_of)                
                 if break_or_not:
-                    print(f'{current_index}：不存在可以被用来裁切的母材！！！')
+                    logger.warning(f'{current_index}零件号{order_info_dict[current_index]["component_number"]}：不存在可以被用来裁切的母材！！！')
                     output_plans.append(give_plan_structure_dict(components = [current_index]))
                     break
             
@@ -241,8 +242,6 @@ def optimization(order_info_dict, storage_info_dict, filter_components_storage_d
                 
                 # 新添加3：不符合条件，什么都不做
                 else: # 方案内存在不符合要求的成品外径
-                    print(f'这是get_rid_of{get_rid_of}')
-                    print(f'出问题了！！\n数目：{components_output_nums}\n重量：{components_output_weights}\n{components_come_first}')
                     pass
 
     for plan in output_plans:
@@ -623,8 +622,6 @@ def cut_exact_info(current_index, storage_info_dict, plan_choice,
                 else:
                     cut_weight = min(current_components_needed_all_weight, max_weight_in_kg)
 
-                # print(f'这是get_rid_of{get_rid_of}')
-                # print(f'这是current_index{type(current_index)}')
 
                 # 新添加：当current_index在get_rid_of里面，需要注意裁切重量不能使得外径超过要求
                 # 由于current_index在get_rid_of里面，在计算排刀方案的时候就已经保证只会裁切这一个零件，所以可以直接设置其重量
@@ -703,7 +700,7 @@ def cut_exact_info(current_index, storage_info_dict, plan_choice,
 
     ##### 母材数量不足，给出提示。后续需要考虑同时给出其他方案。
     else:
-        print("母材数量不足！！！！")
+        logger.warning("母材数量不足！！！！")
         return (None, ) * 7
 
 
@@ -859,12 +856,10 @@ def plans_to_intermediate_excel(all_data_for_output, order_data, parents_storage
             each_plan['index'] = (outer_index, inner_index)
 
             parent_coil_number = each_plan['parent_coil_number']
-            # print(parent_coil_number)
             if parent_coil_number and parent_coil_number != '/':
                 parent_info = parents_storage_data.loc[parents_storage_data['钢卷号码'] == parent_coil_number, ['材质', '钢卷号码', '厚度', '幅度', '长度', '重量', '钢厂']]
             else:
                 parent_info = None
-            # print(parent_info)
             for index, component_num in enumerate(each_plan['components']):
                 component_info = order_data.loc[component_num, [('客户', 'Unnamed: 3_level_1'), 
                                                                ('收货方', 'Unnamed: 4_level_1'), 
@@ -1074,7 +1069,7 @@ def plans_using_components_storage(order_info_dict, filter_components_storage_da
                         # order_info_dict[component]['weight_requirement'] = 0
                         _ = check_buffer_weight(order_info_dict, component, weight_buffer)
                     except:
-                        print('有错误！！！')
+                        logger.error('有错误！！！')
             else:
                 break   
 

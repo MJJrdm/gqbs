@@ -161,7 +161,7 @@ if __name__ == "__main__":
 # # logger.setLevel(logging)
 
 # # handler = logging.FileHandler('plan.log')
-
+# DEBUG, INFO, WARNING, ERROR, CRITICAL
 import logging
 
 # 自定义过滤器类
@@ -175,8 +175,8 @@ class Filter2(logging.Filter):
         return record.levelno == logging.ERROR
     
 class Filter3(logging.Filter):
-    def filter(self, log_record):
-        return log_record.levelno >= logging.WARNING
+    def filter(self, record):
+        return record.levelno >= logging.WARNING
 
 
 # 配置日志记录器
@@ -192,12 +192,12 @@ formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(messag
 file_handler.setFormatter(formatter)
 
 # 创建一个过滤器对象并添加到处理器中
-filter = MyFilter()
 filter3 = Filter3()
-file_handler.addFilter(filter3)
+file_handler.addFilter(filter3) # -> file_handler只接收程度 >= WARNING的日志
 
+# StreamHandler把日志信息输出到控制台
 stream_handler = logging.StreamHandler()
-stream_handler.setLevel(logging.ERROR)
+stream_handler.setLevel(logging.ERROR) # -> stream_handler只接收程度 >= ERROR的日志
 stream_handler.setFormatter(formatter)
 logger.addHandler(stream_handler)
 
