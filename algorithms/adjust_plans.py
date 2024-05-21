@@ -10,18 +10,19 @@ import math
 def main():
     ##### 读取排刀方案数据，排刀方案算法是从python列表或字典输出排刀方案excel表格，
     ##### 现在尝试从排刀excel表格到python列表或字典，然后调整python列表或字典，再进行输出，更换excel表格
-    file_path = 'v9/输出结果/20240417_2.xlsx'
+    file_path = '########.xlsx' # excel表格路径
     df = pd.read_excel(file_path, header = [0, 1])
     fill_columns(df)
     all_plans = df_plans_to_dict(df)
     compute_width_proportion(all_plans)
     compute_maximum_output_weights(all_plans)
-    group_nums = [2, 3, 6, 20, 22, 26]
-    indices = [0, 0, 0, 2, 0, 1]
-    setting_weights = [8000, 3700, 1000, 3000, 4210, 1000]
+    group_nums = [2, 3, 6, 20, 22, 26] # 希望改变重量的零件所属裁切组
+    indices = [0, 0, 0, 2, 0, 1] # 希望改变重量的零件在裁切组内所属位置索引
+    setting_weights = [8000, 3700, 1000, 3000, 4210, 1000] # 调整的重量
     for group_num in group_nums:
         print(f"更改前重量：{all_plans[group_num]['components_output_weight']}\n更改前数量：{all_plans[group_num]['production_nums']}")
 
+    # 调用函数调整成品产出重量
     adjust_plan_weights_and_production_nums(all_plans, group_nums, indices, setting_weights)
     
     for group_num in group_nums:
@@ -62,7 +63,8 @@ def fill_columns(df):
 
 ##### 生成后续更改方案成品产出重量流程所需信息字典格式
 def create_plan_dict():
-    plan_dict = {'parent_coil_number': None, # 母材钢卷号
+    plan_dict = {
+                 'parent_coil_number': None, # 母材钢卷号
                  'parent_used_weight_in_kg': None, # 母材净重
                  'parent_width': None, # 母材宽度
                  'components': [], # 被裁切的成品编号
@@ -137,7 +139,7 @@ def df_plans_to_dict(df):
 
 
 
-##### 计算方案内成品的宽度占母材宽度的比例
+##### 计算方案内成品的宽度占所使用母材的宽度的比例
 def compute_width_proportion(all_plans):
     for plan in all_plans.values():
         plan['width_proportion'] = []
@@ -162,11 +164,6 @@ def compute_maximum_output_weights(all_plans):
             else:
                 plan['maximum_adjustable_weights'].append('/')
 
-
-
-##### 调整方案成品产出重量，group_nums为列表，代表希望调整的成品重量属于哪些裁切组
-##### indices为列表，代表希望调整的具体成品的重量属于某个裁切组的哪个位置
-##### setting_weights为希望调整的重量
 
 # 传入三个参数：group_nums, indices, setting_weights，均为列表。
 # group_nums代表希望调整的成品重量属于哪些裁切组；
@@ -202,16 +199,15 @@ def adjust_plan_weights_and_production_nums(all_plans, group_nums, indices, sett
                             plan['production_nums'][i] = num_production(total_weight, length, width, thickness)
                         except:
                             pass
-                    
-            
+
         else:
             print(f'算法不可自动裁切方案组{group_num}的调整结果，请手动调整')
         
 
 
 ##### 计算横切可生产数量
-def num_production(total_weight, length, width, thickness, density = 7850):
-    return 10**9 * total_weight / (length * width * thickness * density)
+def num_production(total_weight, length, width, thickness, density = 7.85):
+    return 10**6 * total_weight / (length * width * thickness * density)
 
 
 
